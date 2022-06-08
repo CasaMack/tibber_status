@@ -1,0 +1,13 @@
+query PriceInfo {
+  viewer {
+    homes {
+      currentSubscription {
+        priceInfo {
+          tomorrow {
+            total
+          }
+        }
+      }
+    }
+  }
+}

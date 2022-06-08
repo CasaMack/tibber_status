@@ -1,0 +1,35 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  server:
+    image: areskiko/tibber_status
+
+    # Needed to pass token if not set as environment variables
+    tty: true
+    stdin_open: true
+
+    # Easier access to logs
+    volumes:
+      - logVolume:/var/log/
+      # - credentialVolume:/credentials/
+    
+    # Settings
+    environment:
+      # Required variables
+      - INFLUXDB_ADDR=http://localhost:8086
+      - INFLUXDB_DB_NAME=MyDatabase
+      - TIBBER_API_ENDPOINT=https://api.tibber.com/v1-beta/gql
+      # Optional variables
+      # - LOG_LEVEL=info # defaults to info
+      # - CREDENTIALS_FILE=/credentials/credentials
+      # At what time should new prices be fetched. 
+      # - UPDATE_TIME=11 # defaults to 11
+      # - TIBBER_TOKEN=XXXX
+
+volumes:
+  # credentials: {}
+  logvolume:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/var/log/CasaMack/tibber_status'
