@@ -14,8 +14,8 @@ chrono = { version = "0.4" }
 graphql_client = { version = "0.10.0", features = ["reqwest"]}
 reqwest = { version = "0.11" }
 tracing = { version = "0.1" }
-serde = "*"
-tokio = { version = "*", features = ["full"] }
+serde = { version = "1.0.137" }
+tokio = { version = "1.19.2", features = ["full"] }
 
 # Thou shall compile
 openssl = { version = "0.10.29", features = ["vendored"] }
