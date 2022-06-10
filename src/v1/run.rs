@@ -106,9 +106,11 @@ pub async fn tick(
             let date_tomorrow = Utc::now().date().succ().and_hms(0, 0, 0).to_rfc3339();
             tracing::info!("Writing price info for {}", date_tomorrow);
             let client = Client::new(db_addr.as_str(), db_name.as_str());
+            let n = prices.len();
             for (i, price) in prices.into_iter().enumerate() {
                 write_to_db(&client, price, i as u8, date_tomorrow.clone(), "price_info").await;
             }
+            tracing::info!("Done writing price info for {}; {} written", date_tomorrow, n);
             Ok(())
         }
         Err(e) => {
@@ -142,7 +144,7 @@ async fn write_to_db(client: &Client, price: f64, hour: u8, date: String, measur
             tracing::trace!("Writing {} success", hour);
         }
         Err(e) => {
-            tracing::warn!("Writing {} failed: {}", hour, e);
+            tracing::error!("Writing {} failed: {}", hour, e);
         }
     }
 }
