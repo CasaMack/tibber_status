@@ -130,7 +130,11 @@ pub async fn tick(
             for (i, price) in prices.into_iter().enumerate() {
                 write_to_db(&client, price, i as u8, date_tomorrow.clone(), "price_info").await;
             }
-            tracing::info!("Done writing price info for {}; {} written", date_tomorrow, n);
+            tracing::info!(
+                "Done writing price info for {}; {} written",
+                date_tomorrow,
+                n
+            );
             Ok(())
         }
         Err(e) => {
