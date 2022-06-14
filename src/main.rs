@@ -1,5 +1,5 @@
 use tibber_status::v1::run::{
-    get_api_endpoint, get_db_info, get_instant, get_logger, get_token, tick,
+    get_api_endpoint, get_db_info, get_instant, get_logger, get_retries, get_token, tick,
 };
 use tokio::time;
 
@@ -13,11 +13,12 @@ async fn main() {
     let (db_addr, db_name) = get_db_info();
     let api_endpoint = get_api_endpoint();
     let auth = get_token().await;
+    let retries = get_retries();
 
     loop {
         let instant = get_instant();
         time::sleep_until(instant).await;
-        for i in 0..10 {
+        for i in 0..retries {
             let res = tick(
                 auth.clone(),
                 api_endpoint.clone(),

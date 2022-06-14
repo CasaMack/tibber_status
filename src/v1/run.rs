@@ -10,6 +10,9 @@ use tracing_subscriber::{
     FmtSubscriber,
 };
 
+const DEFAULT_RETRIES: u32 = 10;
+const DEFAULT_UPDATE_TIME: &'static str = "11";
+
 use super::tibber::get_price_info;
 
 #[instrument]
@@ -29,6 +32,23 @@ pub fn get_api_endpoint() -> Arc<String> {
     tracing::info!("TIBBER_API_ENDPOINT: {}", api_endpoint);
 
     Arc::new(api_endpoint)
+}
+
+pub fn get_retries() -> u32 {
+    let retries = env::var("RETRIES")
+        .ok()
+        .unwrap_or(DEFAULT_RETRIES.to_string());
+    tracing::info!("RETRIES: {}", retries);
+
+    retries.parse().unwrap_or_else(|e| {
+        tracing::warn!(
+            "Failed to parse {}, using default: {}",
+            retries,
+            DEFAULT_RETRIES
+        );
+        tracing::debug!("{}", e);
+        10
+    })
 }
 
 #[instrument]
@@ -150,7 +170,7 @@ async fn write_to_db(client: &Client, price: f64, hour: u8, date: String, measur
 }
 
 pub fn get_instant() -> time::Instant {
-    let time = env::var("UPDATE_TIME").ok().unwrap_or("11".to_string());
+    let time = env::var("UPDATE_TIME").ok().unwrap_or(DEFAULT_UPDATE_TIME.to_string());
     let time = time.parse().unwrap();
     let when = chrono::Utc::now().date().succ().and_hms(time, 0, 0);
     tracing::info!("Next update time: {}", when);

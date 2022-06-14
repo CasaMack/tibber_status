@@ -24,6 +24,7 @@ services:
       # At what time should new prices be fetched. 
       # - UPDATE_TIME=11 # defaults to 11
       # - TIBBER_TOKEN=XXXX
+      # - RETRIES=10 # defaults to 10
 
 volumes:
   # credentials: {}
