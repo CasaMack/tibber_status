@@ -30,9 +30,9 @@ async fn main() {
                 break;
             } else {
                 tracing::warn!("Failed attempt {} to tick: {}", i, res.err().unwrap());
-                let b = (2 as u64).pow(i);
-                tracing::debug!("Exponential backoff: {} seconds", b);
-                time::sleep(time::Duration::from_secs(b)).await;
+                let backoff = (2 as u64).pow(i);
+                tracing::debug!("Exponential backoff: {} seconds", backoff);
+                time::sleep(time::Duration::from_secs(backoff)).await;
             }
         }
     }
