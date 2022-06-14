@@ -124,11 +124,13 @@ pub async fn tick(
     match prices_opt {
         Ok(prices) => {
             let date_tomorrow = Utc::now().date().succ().and_hms(0, 0, 0).to_rfc3339();
+            let t_pos = date_tomorrow.find('T').unwrap();
+            let date_tomorrow = &date_tomorrow[..t_pos];
             tracing::info!("Writing price info for {}", date_tomorrow);
             let client = Client::new(db_addr.as_str(), db_name.as_str());
             let n = prices.len();
             for (i, price) in prices.into_iter().enumerate() {
-                write_to_db(&client, price, i as u8, date_tomorrow.clone(), "price_info").await;
+                write_to_db(&client, price, i as u8, date_tomorrow.to_string(), "price_info").await;
             }
             tracing::info!(
                 "Done writing price info for {}; {} written",
