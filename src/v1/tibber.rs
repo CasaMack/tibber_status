@@ -60,6 +60,10 @@ pub async fn get_price_info(auth: &str, url: &str) -> Result<Vec<f64>, String> {
                             })?,
                     )
                 }
+                if prices.len() == 0 {
+                    tracing::warn!("No prices");
+                    return Err("No prices".to_string());
+                }
                 Ok(prices)
             }
             None => {
