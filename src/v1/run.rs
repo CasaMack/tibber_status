@@ -158,7 +158,7 @@ struct DBPriceInfo {
 #[instrument(skip(client), level = "trace")]
 async fn write_to_db(client: &Client, price: f64, hour: u8, date: String, measurement: &str) {
     let variable = DBPriceInfo {
-        time: Utc::now(),
+        time: Utc::now().date().succ().and_hms(hour as u32, 0, 0),
         price,
         hour,
         date,
