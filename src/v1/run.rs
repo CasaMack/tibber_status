@@ -10,7 +10,7 @@ use tracing_subscriber::{
     FmtSubscriber,
 };
 
-const DEFAULT_RETRIES: u32 = 10;
+const DEFAULT_RETRIES: u32 = 14;
 const DEFAULT_UPDATE_TIME: &'static str = "11";
 
 use super::tibber::get_price_info;
