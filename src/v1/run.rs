@@ -36,6 +36,15 @@ pub fn get_api_endpoint() -> Arc<String> {
 
 pub fn get_retries() -> u32 {
     let retries = env::var("RETRIES")
+        .or_else(|e| {
+            tracing::warn!(
+                "Error reading RETRIES: {}, using default of {}",
+                e,
+                DEFAULT_RETRIES
+            );
+            tracing::info!("Using default: {}", DEFAULT_RETRIES);
+            Err(())
+        })
         .ok()
         .unwrap_or(DEFAULT_RETRIES.to_string());
     tracing::info!("RETRIES: {}", retries);
@@ -130,7 +139,14 @@ pub async fn tick(
             let client = Client::new(db_addr.as_str(), db_name.as_str());
             let n = prices.len();
             for (i, price) in prices.into_iter().enumerate() {
-                write_to_db(&client, price, i as u8, date_tomorrow.to_string(), "price_info").await;
+                write_to_db(
+                    &client,
+                    price,
+                    i as u8,
+                    date_tomorrow.to_string(),
+                    "price_info",
+                )
+                .await;
             }
             tracing::info!(
                 "Done writing price info for {}; {} written",
@@ -176,7 +192,9 @@ async fn write_to_db(client: &Client, price: f64, hour: u8, date: String, measur
 }
 
 pub fn get_instant() -> time::Instant {
-    let time = env::var("UPDATE_TIME").ok().unwrap_or(DEFAULT_UPDATE_TIME.to_string());
+    let time = env::var("UPDATE_TIME")
+        .ok()
+        .unwrap_or(DEFAULT_UPDATE_TIME.to_string());
     let time = time.parse().unwrap();
     let when = chrono::Utc::now().date().succ().and_hms(time, 0, 0);
     tracing::info!("Next update time: {}", when);
