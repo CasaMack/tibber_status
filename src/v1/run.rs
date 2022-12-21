@@ -164,7 +164,7 @@ pub async fn tick(
 
 #[derive(InfluxDbWriteable)]
 struct DBPriceInfo {
-    pub time: DateTime<Utc>,
+    pub time: DateTime<chrono::Local>,
     pub price: f64,
     pub hour: u8,
     #[influxdb(tag)]
@@ -174,7 +174,7 @@ struct DBPriceInfo {
 #[instrument(skip(client), level = "trace")]
 async fn write_to_db(client: &Client, price: f64, hour: u8, date: String, measurement: &str) {
     let variable = DBPriceInfo {
-        time: Utc::now().date().succ().and_hms(hour as u32, 0, 0),
+        time: chrono::offset::Local::now().date().succ().and_hms(hour as u32, 0, 0),
         price,
         hour,
         date,
