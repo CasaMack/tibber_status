@@ -11,6 +11,7 @@ tracing-subscriber = { version = "0.3" }
 tracing-appender = { version = "0.2" }
 influxdb = { version = "0.5.2", features = ["derive"] }
 chrono = { version = "0.4" }
+chrono-tz = "0.8.1"
 graphql_client = { version = "0.10.0", features = ["reqwest"]}
 reqwest = { version = "0.11" }
 tracing = { version = "0.1" }
